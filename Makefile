@@ -1,8 +1,8 @@
+#Name: Kevin Sanchez
+#Email: kxs152130@utdallas.edu
+#Class: CS 3377.002
+#Homework #6
 #
-## UTD CS3377 CDK Example
-# Dr. Perkins
-# # stephen.perkins@utdallas.edu
-# #
 #
 CXX = g++
 CXXFLAGS =
