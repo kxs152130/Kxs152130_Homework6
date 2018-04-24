@@ -6,6 +6,7 @@ Homework #6
 */
 
  #include <iostream>
+ #include <sstream>
  #include <fstream>
  #include <iomanip>
  #include <string.h>
@@ -82,15 +83,15 @@ class BinaryFileRecord
     * *       */
 
     binInfile.read((char *) myHeader, sizeof(BinaryFileHeader));
-    //const char * m =(char *) (uintptr_t)myHeader->magicNumber;
-    //setCDKMatrixCell(myMatrix, 1, 1,  m);
-    cout <<"Magic: 0x";
+    
+    stringstream magic;
+    magic << "Magic: 0x";
     char hexaDeciNum[100];
     int i =0;
+    
     while((myHeader ->magicNumber) != 0)
     {
        int temp = 0;
-       //binInfile.read((char *) myHeader, sizeof(BinaryFileHeader));
        temp = myHeader->magicNumber % 16;
        if(temp < 10)
        {
@@ -105,23 +106,29 @@ class BinaryFileRecord
 
        myHeader->magicNumber = myHeader->magicNumber/16;
     }
-    for(int j=i-1;j>=0;j--)
-    	cout<< hexaDeciNum[j];
-    //cout << "Magic: " << (myHeader -> magicNumber);
-    cout << "       Version: " << myHeader -> versionNumber;
-    cout << "             NumRecords: " << myHeader -> numRecords;
     
-    //char * strlen = (char *)&myRecord->strLength;
+    for(int j=i-1;j>=0;j--)
+    	magic<< hexaDeciNum[j];
+    
+    setCDKMatrixCell(myMatrix, 1, 1, magic.str().c_str());//prints out to 1,1 in matrix
+    stringstream version;
+    stringstream numRec;
+    
+    version << "Version: " << myHeader -> versionNumber;
+    setCDKMatrixCell(myMatrix, 1, 2, version.str().c_str());//prints out to 1,2 in matrix
+    
+    numRec << "NumRecords: " << myHeader -> numRecords;
+    setCDKMatrixCell(myMatrix, 1, 3, numRec.str().c_str());//prints out to 1,3 in matrix
+    
     for(unsigned int count=0; count < myHeader -> numRecords;count++)
     {
        binInfile.read((char *) myRecord, sizeof(BinaryFileRecord));
-       const char *len = (char *)(uint16_t *) &myRecord->strLength;
-       //setCDKMatrixCell(myMatrix, count+2,1, strlen);
-       cout << "strlen:" <<  (uint16_t)myRecord -> strLength<< endl;
+       stringstream len;
+       
+       len<<"strlen: " << (uint16_t)myRecord ->strLength;
        const char * buff = myRecord->stringBuffer;
-       setCDKMatrixCell(myMatrix, count+2,2, buff);
-       //const char * len = (char *) sizeof(&buff);
-       setCDKMatrixCell(myMatrix, count+2, 1, len);
+       setCDKMatrixCell(myMatrix, count+2,2, buff);//prints out to cells 2-5,2 in matrix
+       setCDKMatrixCell(myMatrix, count+2, 1, len.str().c_str());//prints out to 2-5,2 in matrix
     }
     
     drawCDKMatrix(myMatrix, true);    /* required  */
